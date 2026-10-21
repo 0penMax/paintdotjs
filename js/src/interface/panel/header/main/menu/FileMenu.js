@@ -16,6 +16,7 @@ class FileMenu extends DropMenuItem {
     constructor() {
         super("menu.file", [
             FileMenu.create("new"),
+            FileMenu.create("newFromClipboard"),
             FileMenu.create("open"),
             new DropEntry("menu.file.openRecent", null)
                 .withNoIcon(),

@@ -244,68 +244,10 @@ class DocumentIO {
     }
 
     static async createNewDocument() {
-        const active = this.app.getActiveDocumentWorkspace();
-        let width = active === null ? 800 : active.getDocument().getWidth();
-        let height = active === null ? 600 : active.getDocument().getHeight();
-        const clipboardSize = await this.getClipboardImageSize();
-        if (clipboardSize !== null) {
-            width = clipboardSize.width;
-            height = clipboardSize.height;
-        }
-        const result = await NewFileDialog.open(width, height);
+        const result = await NewFileDialog.open(800, 600);
         if (result !== null) {
             this.app.createBlankDocumentInNewWorkspace(
             result.width, result.height, result.resolution);
-        }
-    }
-
-    static async getClipboardImageSize() {
-        // A file copied from the OS file manager puts its icon, not its pixels,
-        // on the pasteboard. Read the real file first so the dialog is prefilled
-        // with the actual image dimensions.
-        const fileBlob = await this.readClipboardImageFile();
-        if (fileBlob !== null) {
-            const size = await this.getImageSize(fileBlob);
-            if (size !== null) {
-                return size;
-            }
-        }
-
-        const nativeReader = window.desktopFileActions?.readClipboardImage;
-        if (typeof nativeReader === "function") {
-            try {
-                const blob = await nativeReader();
-                if (blob !== null) {
-                    const size = await this.getImageSize(blob);
-                    if (size !== null) {
-                        return size;
-                    }
-                }
-            } catch (_) {
-                // Fall through to the browser clipboard implementation.
-            }
-        }
-
-        const blob = await this.readClipboardImage();
-        if (blob === null) {
-            return null;
-        }
-        return await this.getImageSize(blob);
-    }
-
-    static async getImageSize(blob) {
-        let image = null;
-        try {
-            image = await this.loadImage(blob);
-            return image.width > 0 && image.height > 0
-                ? {width: image.width, height: image.height}
-                : null;
-        } catch (_) {
-            return null;
-        } finally {
-            if (image !== null && typeof image.close === "function") {
-                image.close();
-            }
         }
     }
 

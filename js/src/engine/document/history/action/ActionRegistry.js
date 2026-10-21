@@ -27,6 +27,7 @@ class ActionRegistry {
 
         // File
         this.register(new NewFileAction());
+        this.registerCallback("menu.file.newFromClipboard", () => DocumentIO.pasteIntoNewImage(), () => i18n("menu.file.newFromClipboard.text"), null, "Ctrl+Alt+Shift+N");
         this.registerCallback("menu.file.open", () => DocumentIO.openFilePicker(), "Open...", null, "Ctrl+O");
         this.registerCallback("menu.file.save", () => DocumentIO.saveActive(false), "Save", () => window.app.getActiveDocumentWorkspace() !== null, "Ctrl+S");
         this.registerCallback("menu.file.saveAs", () => DocumentIO.saveActive(true), "Save As...", () => window.app.getActiveDocumentWorkspace() !== null, "Ctrl+Shift+S");
